@@ -1,4 +1,3 @@
-// lib/views/register_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,8 +18,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final FocusNode _usernameFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   File? _imageFile;
   bool _isPasswordVisible = false;
+
+@override
+  void initState() {
+    super.initState();
+    _usernameFocusNode.addListener(() {
+      setState(() {});
+    });
+    _passwordFocusNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _usernameFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -53,16 +72,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Registrasi Berhasil'),
-          content: const Text('Akun Anda telah berhasil dibuat. Silakan login.'),
+         return AlertDialog(
+        backgroundColor: const Color(0xFFB9F6CA), 
+        title: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green), 
+            SizedBox(width: 10),
+            const Text('Registrasi Success'),
+          ],
+        ),
+        content: const Text('Akun Anda telah berhasil dibuat. Silakan login.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop(); // Kembali ke layar login
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                );
               },
-              child: const Text('OK'),
+              child: const Text('OK', style: const TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -75,14 +106,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Registrasi Gagal'),
-          content: Text(message),
+          backgroundColor: const Color(0xFFEA5940),
+          title: Row(
+            children: [
+              Icon(Icons.error, color: Colors.white),
+            SizedBox(width: 10),
+            const Text('Registrasi Failed', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+          content: Text(message, style: const TextStyle(color: Colors.white) ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: const Text('OK', style: const TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -109,8 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final authViewModel = Provider.of<AuthViewModel>(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFFF8F0),
       appBar: AppBar(
-        backgroundColor: Color(0xFF00796B),
+        backgroundColor: const Color(0xFFF5A49B),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -123,12 +162,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onTap: _pickImage,
                   child: CircleAvatar(
                     radius: 60,
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: Color(0xFFF5A49B),
                     backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
                     child: _imageFile == null
                         ? Icon(
                             Icons.camera_alt,
-                            color: Colors.grey[800],
+                            color: Colors.white,
                             size: 50,
                           )
                         : null,
@@ -136,59 +175,92 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 15),
                 const Text(
-                  'Buat Akun Baru',
+                  'Create New Account',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: Color(0xFFF08073)
                   ),
                 ),
                 const SizedBox(height: 10),
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.person, color: Color(0xFF00796B)),
-                    hintText: 'Username',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00796B)),
-                      borderRadius: BorderRadius.circular(12),
+                GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(_usernameFocusNode);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(
+                        color: _usernameFocusNode.hasFocus ? Color(0xFFF08073) : Color(0xFFF5A49B),
+                        width: _usernameFocusNode.hasFocus ? 2.0 : 1.0,
+                      ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00796B), width: 2),
-                      borderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                    child: Row(
+                      children: [
+                        Icon(Icons.person, size: 20, color: Color(0xFFF08073)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextFormField(
+                            focusNode: _usernameFocusNode,
+                            controller: _usernameController,
+                            decoration: const InputDecoration(
+                              hintText: 'Username',
+                              border: InputBorder.none,
+                            ),
+                            validator: _validateUsername,
+                          ),
+                        ),
+                      ],
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   ),
-                  validator: _validateUsername,
                 ),
                 const SizedBox(height: 25),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: !_isPasswordVisible,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock, color: Color(0xFF00796B)),
-                    hintText: 'Password',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00796B)),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00796B), width: 2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                        color: Color(0xFF00796B),
+                GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(_passwordFocusNode);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(
+                        color: _passwordFocusNode.hasFocus ? Color(0xFFF08073) : Color(0xFFF5A49B),
+                        width: _passwordFocusNode.hasFocus ? 2.0 : 1.0,
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                    child: Row(
+                      children: [
+                        Icon(Icons.lock, size: 20, color: Color(0xFFF08073)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextFormField(
+                            focusNode: _passwordFocusNode,
+                            controller: _passwordController,
+                            obscureText: !_isPasswordVisible,
+                            decoration: InputDecoration(
+                              hintText: 'Password',
+                              border: InputBorder.none,
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
+                                child: Icon(
+                                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  color: Color(0xFFF08073),
+                                ),
+                              ),
+                            ),
+                            validator: _validatePassword,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  validator: _validatePassword,
                 ),
                 const SizedBox(height: 25),
                 authViewModel.isLoading
@@ -200,9 +272,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Color(0xFF00796B),
+                            color: Color(0xFFF5A49B),
                             borderRadius: BorderRadius.circular(36.0),
-                            border: Border.all(color: Color(0xFF00796B)),
+                            border: Border.all(color: Color(0xFFF5A49B)),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
@@ -215,7 +287,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
                           child: Center(
                             child: const Text(
-                              'DAFTAR',
+                              'SIGN UP',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
@@ -229,7 +301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    const Text("Sudah punya akun? "),
+                    const Text("Do You Have an Account? "),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -240,9 +312,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         );
                       },
                       child: const Text(
-                        "Masuk",
+                        "Sign In",
                         style: TextStyle(
-                          color: Colors.teal,
+                          color: Color(0xFFEA4937),
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                         ),

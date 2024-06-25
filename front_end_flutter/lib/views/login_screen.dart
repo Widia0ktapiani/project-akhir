@@ -68,9 +68,16 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Login Berhasil'),
-          content: const Text('Selamat datang kembali!'),
+       return AlertDialog(
+        backgroundColor: const Color(0xFFB9F6CA), 
+        title: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green),
+            SizedBox(width: 10),
+            const Text('Login Success'),
+          ],
+        ),
+        content: const Text('Welcome Back To My Bouquet'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -82,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 );
               },
-              child: const Text('OK'),
+              child: const Text('OK', style: const TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -95,14 +102,22 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Login Gagal'),
-          content: const Text('Username atau password salah.'),
+        backgroundColor: const Color(0xFFEA5940), 
+        title: Row(
+          children: [
+            Icon(Icons.error, color: Colors.white),
+            SizedBox(width: 10),
+            const Text('Login Failed', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+          content: const Text('Username or Password Wrong.',style: const TextStyle(color: Colors.white)),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: const Text('OK', style: TextStyle(color: Colors.black),
+            ),
             ),
           ],
         );
@@ -127,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:const Color(0xFFFFF8F0),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(36.0),
@@ -137,16 +152,25 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset(
-                  'assets/images/user.gif',
+                  'assets/images/bunga.gif',
                   width: MediaQuery.of(context).size.width * 0.7,
                   height: MediaQuery.of(context).size.width * 0.7,
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Selamat Datang...',
+                  'Welcome To My Bouquet ',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: Color(0xFFF08073),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Login To Your Account',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFFEA4937),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -159,14 +183,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10.0),
                       border: Border.all(
-                        color: _usernameFocusNode.hasFocus ? Colors.teal : Color(0xFF00796B),
+                        color: _usernameFocusNode.hasFocus ? Color(0xFFF08073) : Color(0xFFF5A49B),
                         width: _usernameFocusNode.hasFocus ? 2.0 : 1.0,
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
                     child: Row(
                       children: [
-                        Icon(Icons.person, size: 20, color: Color(0xFF00796B)),
+                        Icon(Icons.person, size: 20, color: Color(0xFFF08073)),
                         const SizedBox(width: 10),
                         Expanded(
                           child: TextFormField(
@@ -193,14 +217,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10.0),
                       border: Border.all(
-                        color: _passwordFocusNode.hasFocus ? Colors.teal : Color(0xFF00796B),
+                        color: _passwordFocusNode.hasFocus ? Color(0xFFF08073) : Color(0xFFF5A49B),
                         width: _passwordFocusNode.hasFocus ? 2.0 : 1.0,
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
                     child: Row(
                       children: [
-                        Icon(Icons.lock, size: 20, color: Color(0xFF00796B)),
+                        Icon(Icons.lock, size: 20, color: Color(0xFFF08073)),
                         const SizedBox(width: 10),
                         Expanded(
                           child: TextFormField(
@@ -218,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 child: Icon(
                                   _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                                  color: Color(0xFF00796B),
+                                  color: Color(0xFFF08073),
                                 ),
                               ),
                             ),
@@ -237,22 +261,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Color(0xFF00796B),
+                            color: Color(0xFFF5A49B),
                             borderRadius: BorderRadius.circular(36.0),
-                            border: Border.all(color: Color(0xFF00796B)),
+                            border: Border.all(color: Color(0xFFF5A49B)),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
                                 spreadRadius: 2,
                                 blurRadius: 5,
-                                offset: Offset(0, 3), // perubahan posisi bayangan
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
                           child: Center(
                             child: const Text(
-                              'LOGIN',
+                              'SIGN IN',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
@@ -267,7 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      'Belum punya akun? ',
+                      ' Dont Have an Account? ',
                       style: TextStyle(color: Colors.black54),
                     ),
                     GestureDetector(
@@ -280,9 +304,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       child: const Text(
-                        'Daftar',
+                        'SIGN UP',
                         style: TextStyle(
-                          color: Color(0xFF00796B),
+                          color: Color(0xFFEA4937),
                           fontWeight: FontWeight.bold,
                         ),
                       ),

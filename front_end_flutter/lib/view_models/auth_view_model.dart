@@ -14,7 +14,7 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
 
     final response = await http.post(
-      Uri.parse('http://10.10.11.182:3000/users/login'),
+      Uri.parse('http://10.10.11.199:3000/users/login'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({'username': user.username, 'password': user.password}),
     );
@@ -36,12 +36,13 @@ class AuthViewModel extends ChangeNotifier {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://10.10.11.182:3000/users/register'),
+      Uri.parse('http://10.10.11.199:3000/users/register'),
     );
     request.fields['username'] = user.username;
     request.fields['password'] = user.password;
     if (imageFile != null) {
-      request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+      request.files
+          .add(await http.MultipartFile.fromPath('image', imageFile.path));
     }
 
     final response = await request.send();
